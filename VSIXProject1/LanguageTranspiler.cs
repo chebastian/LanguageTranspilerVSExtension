@@ -21,19 +21,21 @@ namespace VSIXProject1
 
             return (string.Empty, string.Empty);
         }
-        public static (string consumed,string rest) Consume(this string text, string token,bool ignoreEscaped)
-        { 
+
+        public static (string consumed, string rest) Consume(this string text, string token, char escapeChar)
+        {
             if (text.Contains(token))
             {
                 var after = text.IndexOf(token) + token.Length;
-                if(text[text.IndexOf(token) -1] == '/')
+                var charbefore = text[text.IndexOf(token) - 1];
+                if (charbefore == escapeChar)
                 {
                     var sub = (text.Substring(0, after), text.Substring(after));
-                    var subRes = sub.Item2.Consume(token, true);
-                    return (sub.Item2 + subRes.consumed, subRes.rest);
+                    var subRes = sub.Item2.Consume(token, escapeChar);
+                    return (sub.Item1 + subRes.consumed, subRes.rest);
                 }
 
-                return (text.Substring(0,after), text.Substring(after));
+                return (text.Substring(0, after), text.Substring(after));
             }
 
             return (string.Empty, string.Empty);
@@ -41,7 +43,13 @@ namespace VSIXProject1
 
         public static (string res,string rest) Between(this string text, string open, string close)
         {
-            var res = text.Consume(open,true).rest.Consume(close,true);
+            var res = text.Consume(open).rest.Consume(close);
+            return (res.consumed.TrimEnd(close.ToCharArray()), res.rest);
+        }
+
+        public static (string res, string rest) Between(this string text, string open, string close, char escapeChar)
+        {
+            var res = text.Consume(open,escapeChar).rest.Consume(close,escapeChar);
             return (res.consumed.TrimEnd(close.ToCharArray()), res.rest);
         }
     }

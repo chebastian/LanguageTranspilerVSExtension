@@ -12,21 +12,21 @@ namespace XUnitTestProject1
         public void GeneralTestBetweenParens()
         {
             var test = "this is a string(with a value) and some more text".Between("(",")");
-            Assert.Equal(test.res, "with a value");
+            Assert.Equal("with a value",test.res);
         }
 
         [Fact]
         public void FindsQuotedString()
         {
             var test2 = "this is a quoted \"string\"".Between("\"","\"");
-            Assert.Equal(test2.res, "string");
+            Assert.Equal("string",test2.res);
         }
 
         [Fact]
         public void Finds_Entire_EscapedString()
         {
-            var escaped = @"test with escape chars [this is the first \[ i should be included] and this too]".Between("[", "]");
-            Assert.Equal(escaped.res, @"this is the first \[ i should be included");
+            var escaped = @"test with escape chars [this is the first \] i should be included] and this too]".Between("[", "]", '\\');
+            Assert.Equal(@"this is the first \] i should be included",escaped.res);
         }
         // More tests:
         // escaped quotes in a string
